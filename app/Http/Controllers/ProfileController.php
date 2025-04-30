@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Appointment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,17 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
+    }
+
+    public function show(): View
+    {
+        $user = Auth::user(); 
+        $appointments = $user->appointments()
+            ->with(['service', 'employee'])
+            ->latest()
+            ->get();
+
+        return view('profile.edit', compact('user', 'appointments')); 
     }
 
     /**
